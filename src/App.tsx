@@ -65,7 +65,8 @@ const APPROACH_OPTIONS = [
 ];
 
 export default function App() {
-  const [view, setView] = useState<'list' | 'editor' | 'wizard'>('list');
+  const [view, setView] = useState<'welcome' | 'list' | 'editor' | 'wizard'>('welcome');
+  const [user, setUser] = useState<{ name: string, email: string, avatar: string } | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>(() => {
     const saved = localStorage.getItem('proposals');
     return saved ? JSON.parse(saved) : INITIAL_PROPOSALS;
@@ -280,6 +281,129 @@ export default function App() {
     return Math.round((completed / activeProposal.sections.length) * 100);
   }, [activeProposal]);
 
+  if (view === 'welcome') {
+    return (
+      <div className="flex h-screen bg-white font-sans overflow-hidden">
+        {/* Left Side - Hero/Branding */}
+        <div className="hidden lg:flex lg:w-1/2 bg-[#fa5d52] relative p-16 flex-col justify-between text-white overflow-hidden">
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/5 rounded-full translate-y-1/2 -translate-x-1/4 blur-3xl"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-12">
+              <div className="bg-white text-[#fa5d52] p-2 rounded-xl shadow-xl">
+                <FileText size={32} />
+              </div>
+              <span className="text-2xl font-black tracking-tighter">Sales Copilot</span>
+            </div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h1 className="text-6xl font-black leading-[1.1] mb-8 tracking-tight">
+                Crie propostas <br />
+                <span className="text-black/20">irresistíveis</span> <br />
+                com o poder da IA.
+              </h1>
+              <p className="text-xl text-white/80 max-w-md leading-relaxed">
+                Aumente sua taxa de conversão com propostas estruturadas, 
+                análise de qualidade em tempo real e assistência inteligente.
+              </p>
+            </motion.div>
+          </div>
+
+          <div className="relative z-10 flex items-center gap-8">
+            <div className="flex -space-x-3">
+              {[1, 2, 3, 4].map(i => (
+                <img 
+                  key={i}
+                  src={`https://picsum.photos/seed/${i + 10}/100/100`} 
+                  className="size-10 rounded-full border-2 border-[#fa5d52] shadow-lg"
+                  alt="User"
+                />
+              ))}
+            </div>
+            <p className="text-sm font-medium text-white/60">
+              Junte-se a +500 consultores de alta performance.
+            </p>
+          </div>
+        </div>
+
+        {/* Right Side - Login */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-8 bg-[#f8f6f5]">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md bg-white rounded-[40px] shadow-2xl shadow-black/5 p-12 border border-slate-100"
+          >
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-black text-slate-900 mb-3">Bem-vindo de volta</h2>
+              <p className="text-slate-500 font-medium">Acesse sua conta para gerenciar suas propostas.</p>
+            </div>
+
+            <div className="space-y-4">
+              <button 
+                onClick={() => {
+                  setUser({
+                    name: 'Guilherme Esposito',
+                    email: 'gsposito@ciandt.com',
+                    avatar: 'https://picsum.photos/seed/guilherme/100/100'
+                  });
+                  setView('list');
+                }}
+                className="w-full flex items-center justify-center gap-4 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 py-4 rounded-2xl transition-all group shadow-sm"
+              >
+                <svg className="size-6" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                <span className="text-slate-700 font-bold">Entrar com Google Workspace</span>
+              </button>
+
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-100"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-4 text-slate-400 font-bold tracking-widest">ou</span>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">E-mail corporativo</label>
+                  <input 
+                    type="email" 
+                    placeholder="nome@empresa.com"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm focus:ring-2 focus:ring-[#fa5d52]/20 outline-none transition-all"
+                  />
+                </div>
+                <button className="w-full bg-slate-900 hover:bg-black text-white py-4 rounded-2xl font-bold transition-all shadow-xl shadow-black/10">
+                  Continuar com E-mail
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-12 text-center">
+              <p className="text-xs text-slate-400 font-medium">
+                Ao continuar, você concorda com nossos <br />
+                <a href="#" className="text-slate-600 underline hover:text-[#fa5d52]">Termos de Serviço</a> e <a href="#" className="text-slate-600 underline hover:text-[#fa5d52]">Privacidade</a>.
+              </p>
+            </div>
+          </motion.div>
+
+          <p className="mt-8 text-sm text-slate-400 font-medium">
+            Desenvolvido por <span className="text-slate-600 font-bold">CI&T AI Studio</span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (view === 'list') {
     return (
       <div className="flex h-screen flex-col bg-[#f8f6f5] text-slate-900 font-sans overflow-hidden">
@@ -310,6 +434,27 @@ export default function App() {
             >
               <Plus size={20} /> Nova Proposta
             </button>
+
+            {user && (
+              <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs font-bold text-slate-900 leading-none">{user.name}</p>
+                  <p className="text-[10px] text-slate-500 font-medium">{user.email}</p>
+                </div>
+                <button 
+                  onClick={() => {
+                    setUser(null);
+                    setView('welcome');
+                  }}
+                  className="relative group"
+                >
+                  <img src={user.avatar} className="size-10 rounded-full border-2 border-white shadow-sm group-hover:opacity-80 transition-opacity" alt="Avatar" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="bg-black/50 text-white text-[8px] font-bold px-1 rounded">Sair</div>
+                  </div>
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -722,6 +867,20 @@ export default function App() {
             >
               Submeter
             </button>
+
+            {user && (
+              <div className="flex items-center gap-3 pl-4 border-l border-slate-200 ml-2">
+                <button 
+                  onClick={() => {
+                    setUser(null);
+                    setView('welcome');
+                  }}
+                  className="relative group"
+                >
+                  <img src={user.avatar} className="size-8 rounded-full border-2 border-white shadow-sm group-hover:opacity-80 transition-opacity" alt="Avatar" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
