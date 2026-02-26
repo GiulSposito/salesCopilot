@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  FileText, 
-  MessageSquare, 
-  BookOpen, 
-  Save, 
-  Share2, 
-  Download, 
-  History, 
-  Plus, 
-  CheckCircle2, 
-  AlertCircle, 
+import {
+  FileText,
+  MessageSquare,
+  BookOpen,
+  Save,
+  Share2,
+  Download,
+  History,
+  Plus,
+  CheckCircle2,
+  AlertCircle,
   Send,
   Sparkles,
   Bold,
@@ -27,7 +27,9 @@ import {
   Upload,
   Check,
   ChevronRight,
-  File
+  File,
+  Lock,
+  LogIn
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
@@ -65,6 +67,9 @@ const APPROACH_OPTIONS = [
 ];
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
   const [view, setView] = useState<'list' | 'editor' | 'wizard'>('list');
   const [proposals, setProposals] = useState<Proposal[]>(() => {
     const saved = localStorage.getItem('proposals');
@@ -280,6 +285,87 @@ export default function App() {
     return Math.round((completed / activeProposal.sections.length) * 100);
   }, [activeProposal]);
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem('isAuthenticated', 'true');
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.setItem('isAuthenticated', 'false');
+    setIsAuthenticated(false);
+    setView('list');
+  };
+
+  // Login Screen
+  if (!isAuthenticated) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          <div className="bg-white rounded-3xl shadow-2xl p-12 border border-slate-200">
+            <div className="text-center mb-8">
+              <div className="size-20 bg-[#fa5d52] text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#fa5d52]/30">
+                <FileText size={40} />
+              </div>
+              <h1 className="text-3xl font-black text-slate-900 mb-2">AI Proposal Studio</h1>
+              <p className="text-slate-500 font-medium">Bem-vindo de volta</p>
+            </div>
+
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Email</label>
+                <input
+                  type="email"
+                  placeholder="seu@email.com"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#fa5d52]/20 focus:border-[#fa5d52] outline-none transition-all"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Senha</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#fa5d52]/20 focus:border-[#fa5d52] outline-none transition-all"
+                  required
+                />
+              </div>
+
+              <div className="flex items-center justify-between text-xs">
+                <label className="flex items-center gap-2 text-slate-600 cursor-pointer">
+                  <input type="checkbox" className="rounded border-slate-300 text-[#fa5d52] focus:ring-[#fa5d52]" />
+                  Lembrar-me
+                </label>
+                <button type="button" className="text-[#fa5d52] font-bold hover:underline">
+                  Esqueceu a senha?
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-[#fa5d52] hover:bg-[#e04d44] text-white px-6 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-[#fa5d52]/30 flex items-center justify-center gap-2"
+              >
+                <LogIn size={20} />
+                Entrar
+              </button>
+            </form>
+
+            <div className="mt-8 text-center">
+              <p className="text-xs text-slate-400">
+                Protótipo - Qualquer email/senha para entrar
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (view === 'list') {
     return (
       <div className="flex h-screen flex-col bg-[#f8f6f5] text-slate-900 font-sans overflow-hidden">
@@ -296,19 +382,26 @@ export default function App() {
           <div className="flex items-center gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-              <input 
-                type="text" 
-                placeholder="Pesquisar propostas..." 
+              <input
+                type="text"
+                placeholder="Pesquisar propostas..."
                 className="pl-10 pr-4 py-2.5 bg-slate-100 border-none rounded-xl text-sm w-80 focus:ring-2 focus:ring-[#fa5d52]/20 transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button 
+            <button
               onClick={handleCreateProposal}
               className="bg-[#fa5d52] hover:bg-[#e04d44] text-white px-6 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg shadow-[#fa5d52]/20 flex items-center gap-2"
             >
               <Plus size={20} /> Nova Proposta
+            </button>
+            <button
+              onClick={handleLogout}
+              className="p-2.5 hover:bg-slate-100 rounded-xl transition-colors text-slate-400 hover:text-slate-600"
+              title="Sair"
+            >
+              <LogIn size={20} />
             </button>
           </div>
         </header>
