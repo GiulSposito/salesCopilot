@@ -1,26 +1,24 @@
-import { GoogleGenAI } from "@google/genai";
+// import { GoogleGenAI } from "@google/genai";
+// const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
-
+// Mock service for prototype - Gemini API disabled
 export async function chatWithAI(prompt: string, context: string) {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: [
-        {
-          parts: [
-            { text: `You are an expert commercial proposal assistant. 
-            Context of the current proposal section:
-            ${context}
-            
-            User request: ${prompt}` }
-          ]
-        }
-      ],
-    });
-    return response.text;
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    return "Desculpe, encontrei um erro ao processar sua solicitação.";
-  }
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  // Return mock response
+  return `🤖 **Modo Protótipo - AI Desabilitada**
+
+Sua pergunta: "${prompt}"
+
+Esta é uma resposta simulada. Para habilitar respostas reais da IA, configure a GEMINI_API_KEY no arquivo .env.local e descomente o código em src/services/geminiService.ts.
+
+**Contexto da proposta:**
+- Seção atual processada com sucesso
+- Análise de conteúdo em modo simulação
+
+Para assistência real, algumas sugestões:
+- Revise a estrutura da seção atual
+- Adicione mais detalhes técnicos
+- Considere incluir métricas e KPIs`;
 }
